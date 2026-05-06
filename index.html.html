@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STIC OMS - User Manual (Step-by-Step)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* ==========================================
+           1. CORE VARIABLES (Clean Corporate Glass)
+           ========================================== */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            /* โทนสว่างระดับองค์กร (Enterprise Light Palette) */
+            --clr-navy: #0f4c92;        
+            --clr-primary: #1E75D8;     
+            --clr-cyan: #0284c7;        
+            --clr-text-main: #1e293b;        
+            --clr-text-muted: #475569;  
+            --glass-bg: rgba(255, 255, 255, 0.65);       
+            --glass-border: rgba(255, 255, 255, 0.8);    
+            --danger: #e11d48;
+            --warning: #d97706;
+            --success: #059669;
+            
+            --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #f8fafc 100%);
+            --shadow-glass: 0 10px 40px -10px rgba(30, 117, 216, 0.15);
+        }
+
+        body {
+            background-color: #cbd5e1;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh;
+            font-family: 'Kanit', sans-serif;
+            overflow: hidden;
+            color: var(--clr-text-main);
+        }
+
+        /* ==========================================
+           2. PRESENTATION STAGE
+           ========================================== */
+        #presentation-area {
+            position: relative; width: 1280px; height: 720px;
+            background: var(--bg-gradient);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.6);
+            overflow: hidden;
+        }
+
+        /* Animated Soft Blobs Background */
+        #presentation-area::before {
+            content: ''; position: absolute;
+            top: -20%; left: -10%; width: 60%; height: 60%;
+            background: radial-gradient(circle, rgba(30, 117, 216, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatBlob 12s ease-in-out infinite alternate;
+            z-index: 0; pointer-events: none;
+        }
+
+        #presentation-area::after {
+            content: ''; position: absolute;
+            bottom: -20%; right: -10%; width: 70%; height: 70%;
+            background: radial-gradient(circle, rgba(2, 132, 199, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: floatBlob 15s ease-in-out infinite alternate-reverse;
+            z-index: 0; pointer-events: none;
+        }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, -40px) scale(1.1); }
+        }
+
+        /* Minimal Grid Overlay */
+        .grid-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(30, 117, 216, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(30, 117, 216, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; z-index: 0; pointer-events: none;
+        }
+
+        /* ==========================================
+           3. SLIDE MECHANICS
+           ========================================== */
+        .slide {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 50px 80px 80px 80px;
+            opacity: 0; visibility: hidden;
+            transform: scale(0.96) translateY(15px);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+            z-index: 1; display: flex; flex-direction: column;
+        }
+
+        .slide.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); z-index: 2; }
+
+        /* Titles */
+        .slide-title {
+            font-size: 40px; color: var(--clr-navy); font-weight: 700;
+            margin-bottom: 30px; border-bottom: 2px solid rgba(30, 117, 216, 0.1);
+            padding-bottom: 15px; display: flex; align-items: center; gap: 15px;
+        }
+        .slide-title span { color: var(--clr-primary); font-weight: 400; }
+        .slide-title i { color: var(--clr-primary); font-size: 34px; }
+
+        p, li { font-size: 18px; line-height: 1.6; margin-bottom: 10px; color: var(--clr-text-muted); }
+        strong { color: var(--clr-text-main); font-weight: 600; }
+        code { background: rgba(30, 117, 216, 0.08); padding: 3px 8px; border-radius: 6px; color: var(--clr-primary); font-family: monospace; border: 1px solid rgba(30, 117, 216, 0.15); }
+
+        /* ==========================================
+           4. GLASS CARDS & GRIDS
+           ========================================== */
+        .content-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 35px; flex-grow: 1; }
+        .content-grid-single { display: grid; grid-template-columns: 1fr; gap: 35px; flex-grow: 1; }
+
+        .cyber-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 20px;
+            padding: 35px; position: relative;
+            box-shadow: var(--shadow-glass);
+            transition: all 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px -10px rgba(30, 117, 216, 0.2);
+            border-color: #fff;
+        }
+
+        .cyber-card h3 {
+            font-size: 24px; color: var(--clr-primary); font-weight: 700;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+            border-bottom: 1px dashed rgba(30, 117, 216, 0.2);
+            padding-bottom: 15px;
+        }
+        .cyber-card h3 i { color: var(--clr-cyan); font-size: 26px; }
+
+        ul.tech-list { list-style: none; }
+        ul.tech-list li {
+            position: relative; padding-left: 35px; margin-bottom: 18px; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 15px;
+        }
+        ul.tech-list li:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        ul.tech-list li::before {
+            content: '\f058'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; left: 0; top: 2px;
+            color: var(--clr-primary); font-size: 18px;
+        }
+
+        /* Intro Screen */
+        .intro-container {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            height: 100%; text-align: center;
+        }
+        .hologram-logo {
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, var(--clr-navy), var(--clr-cyan));
+            border-radius: 30px; color: white; display: flex; justify-content: center; align-items: center;
+            font-size: 60px; box-shadow: 0 15px 30px rgba(30, 117, 216, 0.3); margin-bottom: 30px;
+        }
+        
+        .intro-title { font-size: 65px; font-weight: 700; color: var(--clr-navy); letter-spacing: 2px; margin-bottom: 10px; }
+        .intro-title span { color: var(--clr-primary); font-weight: 300; }
+        .intro-sub { font-size: 24px; color: var(--clr-text-muted); font-weight: 400; }
+
+        /* Progress Bar */
+        .progress-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(30, 117, 216, 0.1); z-index: 10;
+        }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--clr-primary), var(--clr-cyan)); width: 0%; transition: width 0.5s ease; border-radius: 0 6px 6px 0; }
+
+        /* Navigation Controls */
+        .controls {
+            position: absolute; bottom: 35px; left: 80px; right: 80px;
+            display: flex; justify-content: space-between; align-items: center; z-index: 10;
+        }
+        .btn-nav {
+            background: #fff; border: 1px solid var(--glass-border); color: var(--clr-primary);
+            width: 50px; height: 50px; border-radius: 50%; font-size: 20px; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); display: flex; justify-content: center; align-items: center;
+        }
+        .btn-nav:hover { background: var(--clr-primary); color: #fff; box-shadow: 0 8px 20px rgba(30, 117, 216, 0.3); transform: scale(1.08); border-color: var(--clr-primary); }
+        .btn-nav:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #e2e8f0; color: #94a3b8; border-color: #cbd5e1; }
+        
+        .slide-counter { font-size: 18px; color: var(--clr-navy); font-weight: 600; background: rgba(255,255,255,0.8); padding: 6px 20px; border-radius: 20px; box-shadow: var(--shadow-glass); backdrop-filter: blur(5px); }
+        
+        /* Highlights */
+        .hl-red { color: var(--danger); font-weight: 700; background: #ffe4e6; padding: 2px 8px; border-radius: 6px; }
+        .hl-yellow { color: var(--warning); font-weight: 700; background: #fef3c7; padding: 2px 8px; border-radius: 6px; }
+        .hl-green { color: var(--success); font-weight: 700; background: #d1fae5; padding: 2px 8px; border-radius: 6px; }
+        .hl-blue { color: var(--clr-primary); font-weight: 700; background: #dbeafe; padding: 2px 8px; border-radius: 6px; }
+
+        /* Step Circle */
+        .step-circle {
+            display: inline-flex; justify-content: center; align-items: center;
+            width: 28px; height: 28px; background: var(--clr-primary); color: white;
+            border-radius: 50%; font-size: 14px; font-weight: bold; margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="presentation-area">
+        <div class="grid-overlay"></div>
+
+        <!-- SLIDE 1: INTRO -->
+        <div class="slide active" id="slide-1">
+            <div class="intro-container">
+                <div class="hologram-logo"><i class="fa-solid fa-book-open-reader"></i></div>
+                <h1 class="intro-title">STIC <span>OMS</span></h1>
+                <p class="intro-sub">คู่มือการใช้งานระบบแบบ Step-by-Step</p>
+                <p style="margin-top: 30px; font-size: 16px; opacity: 0.8;">[ กดลูกศร <i class="fa-solid fa-arrow-right"></i> บนคีย์บอร์ดหรือคลิกปุ่มด้านล่างเพื่อเริ่มดูคู่มือ ]</p>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: LOGIN -->
+        <div class="slide" id="slide-2">
+            <h2 class="slide-title"><i class="fa-solid fa-right-to-bracket"></i> 1. การเข้าสู่ระบบ <span>(Log In)</span></h2>
+            <div class="content-grid-single">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-fingerprint"></i> ขั้นตอนการเข้าระบบ</h3>
+                    <ul class="tech-list">
+                        <li><span class="step-circle">1</span> เข้าสู่หน้าเว็บไซต์หลัก จะพบกับหน้าจอ Log In (พื้นหลังเคลื่อนไหว)</li>
+                        <li><span class="step-circle">2</span> กรอก <strong>Username</strong> และ <strong>Password</strong> ของคุณ
+                            <br><small style="margin-left: 40px; color: var(--clr-text-muted);">* บัญชีผู้ดูแลระบบ (ตั้งต้น) คือ Username: <code>Stic@offshore.com</code> / Password: <code>Stic0026</code></small>
+                        </li>
+                        <li><span class="step-circle">3</span> หากต้องการตรวจสอบความถูกต้องของรหัสผ่าน สามารถคลิกที่คำว่า <span class="hl-blue">SHOW</span> ในช่อง Password</li>
+                        <li><span class="step-circle">4</span> กดปุ่ม <strong>LOG IN</strong> สีน้ำเงินด้านล่าง</li>
+                        <li><span class="step-circle">5</span> <strong>ประหยัดเวลา:</strong> ระบบจะจดจำการล็อกอินของคุณไว้ในเครื่อง (Session) ทำให้ไม่ต้องกรอกรหัสใหม่ทุกครั้งที่โหลดหน้าเว็บ จนกว่าจะกด Logout ออกจากระบบ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: DASHBOARD -->
+        <div class="slide" id="slide-3">
+            <h2 class="slide-title"><i class="fa-solid fa-chart-line"></i> 2. แดชบอร์ดภาพรวม <span>(Executive Dashboard)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-gauge-high"></i> ข้อมูลที่คุณจะเห็นในหน้าแรก</h3>
+                    <ul class="tech-list">
+                        <li><strong>แถบเมนูด้านบน (Header):</strong> จะแสดงชื่อของคุณ และมีป้าย <i class="fa-solid fa-bell" style="color:var(--warning);"></i> <strong>กระดิ่งแจ้งเตือน</strong> สีแดงเด้งขึ้นมา หากระบบพบว่ามีใบรับรองของพนักงานคนใดใกล้หมดอายุ</li>
+                        <li><strong>Projects Overview:</strong> กราฟสรุปสถานะของ MOB ทั้งหมด คัดแยกเป็น Upcoming, On-Going, Pending, Completed และ Delayed</li>
+                        <li><strong>AIMS Submission:</strong> กราฟสรุปสัดส่วนว่ามีรายงานถูกส่งเข้า AIMS แล้วกี่เปอร์เซ็นต์ เทียบกับค้างส่ง</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-magnifying-glass-chart"></i> สถิติเชิงลึก</h3>
+                    <ul class="tech-list">
+                        <li><strong>Certifications Health:</strong> กราฟสรุปสุขภาพใบเซอร์ทั้งหมด ว่ามีสถานะ Active, Nearly Expired หรือ Expired จำนวนกี่ใบ</li>
+                        <li><strong>Manhour & Safety:</strong> กราฟประเมินแนวโน้มการทำล่วงเวลา (Overtime) เทียบกับสถิติรายงานความปลอดภัย (UAUC) ตลอดช่วง 12 เดือน เพื่อช่วยวิเคราะห์ความเหนื่อยล้าของพนักงาน</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: CREATE PROJECT -->
+        <div class="slide" id="slide-4">
+            <h2 class="slide-title"><i class="fa-solid fa-folder-plus"></i> 3. การสร้างโครงการใหม่ <span>(Add New Project)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card" style="grid-column: span 2;">
+                    <h3><i class="fa-solid fa-plus-circle"></i> ขั้นตอนการเพิ่มงาน (MOB)</h3>
+                    <ul class="tech-list" style="columns: 2; gap: 40px;">
+                        <li><span class="step-circle">1</span> ไปที่เมนู <code>Project Detail</code> ด้านซ้ายมือ และกดปุ่ม <strong>+ Add New Project</strong></li>
+                        <li><span class="step-circle">2</span> กรอกข้อมูลส่วนหัว เช่น ชื่อ Project, Engineer, Field และ SRO</li>
+                        <li><span class="step-circle">3</span> <span class="hl-blue">Auto MOB:</span> เมื่อคุณคลิกไปพิมพ์ช่องอื่น ระบบจะประมวลผล <strong>รันเลข MOB ล่าสุด</strong> ให้โดยอัตโนมัติ ไม่ต้องพิมพ์เอง</li>
+                        <li><span class="step-circle">4</span> กำหนดจำนวนพนักงานที่ไปใน MOB นี้ที่ปุ่มลูกศรขึ้นลง ระบบจะสร้างฟอร์มให้ตามจำนวนคน</li>
+                        <li><span class="step-circle">5</span> พิมพ์ชื่อและตำแหน่ง (ระบบจะค้นหาชื่อพนักงานเก่ามาให้เลือกอัตโนมัติ)</li>
+                        <li><span class="step-circle">6</span> กำหนด <strong>Start Date</strong> และ <strong>Finish Date</strong></li>
+                        <li><span class="step-circle">7</span> เลือกติ๊กวิธีการตรวจสอบ (NDT Methods) และกดยืนยันการจอง <strong>Chopper</strong></li>
+                        <li><span class="step-circle">8</span> กดปุ่ม <strong>Save</strong> เพื่อบันทึกเข้าฐานข้อมูล</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: UPDATE STATUS -->
+        <div class="slide" id="slide-5">
+            <h2 class="slide-title"><i class="fa-solid fa-list-check"></i> 4. การอัปเดตสถานะโครงการ <span>(Update Checklist)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-hand-pointer"></i> อัปเดตแบบ 1-Click</h3>
+                    <p style="margin-bottom:15px;">คุณไม่ต้องกดปุ่ม Edit ให้ยุ่งยาก สามารถอัปเดตสถานะงานได้จากหน้าตารางโดยตรง:</p>
+                    <ul class="tech-list">
+                        <li>ในคอลัมน์ <strong>Checklists</strong> จะมีกล่องสี่เหลี่ยม 3 กล่องให้ติ๊ก</li>
+                        <li>เมื่อส่งเอกสารแล้ว ให้คลิกติ๊กถูกที่ช่อง <code>Close Out</code>, <code>Timesheet</code>, และ <code>JA</code></li>
+                        <li>ระบบจะส่งข้อมูลไปบันทึกหลังบ้านแบบ Real-time ทันที</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-robot"></i> ระบบคำนวณสถานะอัตโนมัติ</h3>
+                    <ul class="tech-list">
+                        <li><strong>Due Dates:</strong> ระบบใช้วันจบงาน (Finish Date) มาบวกวันเพิ่ม เพื่อสร้างกำหนดส่ง (Due Date) ให้อัตโนมัติ (Close Out +3, Report +7, JA +14)</li>
+                        <li><strong>COMPLETED:</strong> จะขึ้นสีเขียวเมื่อติ๊ก Checklists ครบทั้ง 3 ข้อ</li>
+                        <li><strong>DELAYED:</strong> แจ้งเตือนสีแดง หากถึงกำหนด JA Due Date แต่ยังติ๊กเอกสารไม่ครบ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: SUMMARY REPORT -->
+        <div class="slide" id="slide-6">
+            <h2 class="slide-title"><i class="fa-solid fa-file-export"></i> 5. ระบบรายงานสรุป <span>(Summary Report)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card" style="grid-column: span 2;">
+                    <h3><i class="fa-solid fa-table-list"></i> การเพิ่มรายงานการตรวจสอบ</h3>
+                    <p style="margin-bottom: 20px;">ในเมนู <code>Summary Report</code> คุณสามารถเพิ่มรายการได้ 2 วิธี:</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h4 style="color:var(--clr-navy); margin-bottom:10px;"><i class="fa-solid fa-keyboard text-primary"></i> 1. พิมพ์เพิ่มเอง (Manual)</h4>
+                            <ul class="tech-list">
+                                <li>กดปุ่ม <strong>+ Add Report</strong> มุมขวาบน</li>
+                                <li>กรอกข้อมูล P/F, ประเภท NDE, วันที่ และสถานะ AIMS ทีละรายการ</li>
+                                <li>หากกรอก Submitted Date ระบบจะเปลี่ยนสถานะเป็น <span class="hl-green">Submitted</span> อัตโนมัติ</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color:var(--clr-navy); margin-bottom:10px;"><i class="fa-solid fa-wand-magic-sparkles text-primary"></i> 2. นำเข้าจาก Excel (Smart Import)</h4>
+                            <ul class="tech-list">
+                                <li>กดปุ่ม <strong>Import Excel</strong> และเลือกไฟล์รายงานของคุณ</li>
+                                <li>ระบบจะอ่านหัวตารางและนำเข้าข้อมูลหลายสิบรายการให้ในเสี้ยววินาที</li>
+                                <li><strong>ตัวช่วยอัจฉริยะ:</strong> หากชื่อ Inspector ในไฟล์ Excel พิมพ์ผิดเล็กน้อย ระบบจะพยายามค้นหาและจับคู่ให้ตรงกับชื่อในฐานข้อมูลให้อัตโนมัติ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: CERTIFICATIONS -->
+        <div class="slide" id="slide-7">
+            <h2 class="slide-title"><i class="fa-solid fa-id-card-clip"></i> 6. ทะเบียนใบรับรองบุคลากร <span>(Certification Tracking)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-user-shield"></i> การเพิ่มใบรับรอง</h3>
+                    <ul class="tech-list">
+                        <li><span class="step-circle">1</span> ไปที่เมนู <code>Certification</code> กดปุ่ม <strong>+ Add Personnel</strong></li>
+                        <li><span class="step-circle">2</span> กรอกชื่อ ตำแหน่ง สถานที่ปฏิบัติงาน</li>
+                        <li><span class="step-circle">3</span> เลือกประเภทใบเซอร์จาก Dropdown แล้วกด <span class="hl-blue">+ Add</span></li>
+                        <li><span class="step-circle">4</span> <strong>สำคัญ:</strong> ระบุ <code>Issue</code> และ <code>Expiry Date</code> ทุกครั้ง</li>
+                        <li><span class="step-circle">5</span> หากต้องการเพิ่มใบเซอร์ชนิดใหม่ ให้เลือก <code>Add New Cert Type</code></li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-bell"></i> ระบบแจ้งเตือนวันหมดอายุ</h3>
+                    <p style="margin-bottom: 15px;">ระบบจะคำนวณวันหมดอายุเทียบกับวันปัจจุบันให้ทุกวัน:</p>
+                    <ul class="tech-list">
+                        <li><span class="hl-green">ACTIVE</span> = เหลือเวลาเกิน 90 วัน</li>
+                        <li><span class="hl-yellow">NEARLY EXPIRED</span> = เหลือน้อยกว่า 90 วัน
+                            <br><small>(ทริกเกอร์ระบบแจ้งเตือนกระดิ่งมุมขวาบนของเว็บให้คุณทราบทันที)</small></li>
+                        <li><span class="hl-red">EXPIRED</span> = หมดอายุแล้ว</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: MANHOUR & OT -->
+        <div class="slide" id="slide-8">
+            <h2 class="slide-title"><i class="fa-solid fa-stopwatch"></i> 7. การจัดการชั่วโมงทำงาน <span>(Manhour & OT)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-clock"></i> ชั่วโมงทำงานปกติ (Auto-Calculated)</h3>
+                    <ul class="tech-list">
+                        <li>ผู้ใช้ไม่ต้องคำนวณชั่วโมงปกติด้วยตัวเอง!</li>
+                        <li>ระบบจะกวาดวันที่ Start-Finish ของทุกโปรเจกต์ที่พนักงานคนนั้นไปปฏิบัติงาน</li>
+                        <li>ตัดวันทำงานที่ทับซ้อนกันออก แล้วนำจำนวนวันมาคูณด้วย <strong>12 ชั่วโมง/วัน</strong> แสดงผลแยกรายเดือนให้อัตโนมัติ</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-business-time"></i> การเพิ่มเวลาล่วงเวลา (Overtime)</h3>
+                    <ul class="tech-list">
+                        <li><span class="step-circle">1</span> ไปที่เมนู <code>Manhour</code></li>
+                        <li><span class="step-circle">2</span> ค้นหาชื่อพนักงานในตาราง</li>
+                        <li><span class="step-circle">3</span> กดปุ่มสีเหลือง <strong><i class="fa-solid fa-clock"></i> Edit OT</strong> ท้ายชื่อ</li>
+                        <li><span class="step-circle">4</span> ใส่ตัวเลขชั่วโมงล่วงเวลาแยกตามเดือน (Jan-Dec)</li>
+                        <li><span class="step-circle">5</span> กด Save ระบบจะบวกเวลาทั้งหมดเป็น <code>Total Manhour</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: UAUC TRACKING -->
+        <div class="slide" id="slide-9">
+            <h2 class="slide-title"><i class="fa-solid fa-clipboard-user"></i> 8. การบันทึกสถิติความปลอดภัย <span>(UAUC Tracking)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-arrows-spin"></i> ระบบดึงรายชื่ออัตโนมัติ (Auto-Sync)</h3>
+                    <p style="margin-bottom: 15px;"><strong>ไม่ต้องเสียเวลาเพิ่มรายชื่อพนักงานใหม่ในหน้า UAUC!</strong></p>
+                    <ul class="tech-list">
+                        <li>ระบบจะทำการ <strong>ซิงโครไนซ์ (Auto-Sync)</strong> รายชื่อมาจากหน้า Project และ Certification ให้โดยอัตโนมัติ</li>
+                        <li>หากมีพนักงานใหม่ ระบบจะสร้างตารางเปล่า (เดือน Jan-Dec เป็น 0) ให้พนักงานคนนั้นไว้รอทันที</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-trophy"></i> การกรอกข้อมูล & จัดอันดับ</h3>
+                    <ul class="tech-list">
+                        <li><span class="step-circle">1</span> ในหน้า <code>UAUC</code> ให้กดปุ่ม <strong><i class="fa-solid fa-pen"></i> Edit</strong> สีน้ำเงิน ด้านหลังชื่อพนักงาน</li>
+                        <li><span class="step-circle">2</span> กรอกจำนวนรายงาน UAUC ที่พนักงานส่งในแต่ละเดือน แล้วกด Save</li>
+                        <li><span class="step-circle">3</span> ระบบจะอัปเดต <strong>Top 5 Ranking</strong> โชว์ผู้ที่ทำยอด UAUC สูงสุด 5 อันดับแรกด้านบนตารางทันที</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: ADMIN & LOGS -->
+        <div class="slide" id="slide-10">
+            <h2 class="slide-title"><i class="fa-solid fa-gears"></i> 9. การตั้งค่าผู้ใช้ และ ประวัติระบบ <span>(Admin Settings)</span></h2>
+            <div class="content-grid">
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-users-gear"></i> จัดการรายชื่อผู้ใช้งาน (User Management)</h3>
+                    <ul class="tech-list">
+                        <li>การเพิ่ม/ลบ สิทธิ์เข้าสู่ระบบ ให้ทำผ่าน <strong>Google Sheets</strong> (ฐานข้อมูลหลัก)</li>
+                        <li>เปิดไปที่แท็บชีตที่ชื่อว่า <code>Users</code></li>
+                        <li>สามารถพิมพ์ Username, Password และ Role ของพนักงานลงในบรรทัดใหม่ได้เลย พนักงานจะสามารถล็อกอินได้ทันที</li>
+                    </ul>
+                </div>
+                <div class="cyber-card">
+                    <h3><i class="fa-solid fa-file-contract"></i> การตรวจสอบความโปร่งใส (Action Logs)</h3>
+                    <ul class="tech-list">
+                        <li>ทุกการเปลี่ยนแปลง (เพิ่ม, แก้ไข, ลบข้อมูล, ติ๊ก Checklist) จะถูกบันทึกประวัติไว้ตลอดเวลา</li>
+                        <li>ผู้ดูแลสามารถเปิดดูได้ที่ Google Sheets แท็บ <code>Action Logs</code></li>
+                        <li>ระบบจะระบุ <strong>"ชื่อผู้ใช้ที่ล็อกอิน"</strong>, <strong>"วันเวลา"</strong> และ <strong>"รายละเอียดที่แก้ไข"</strong> เพื่อให้สามารถตรวจสอบย้อนหลังได้อย่างชัดเจน</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn-nav" id="btn-prev" onclick="changeSlide(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="slide-counter"><span id="current-slide">1</span> / <span id="total-slides">10</span></div>
+            <button class="btn-nav" id="btn-next" onclick="changeSlide(1)"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+        
+        function updateProgress() {
+            const percentage = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+            document.getElementById('progress-bar').style.width = percentage + '%';
+        }
+
+        function changeSlide(direction) {
+            document.getElementById('slide-' + currentSlide).classList.remove('active');
+            
+            currentSlide += direction;
+            
+            if(currentSlide < 1) currentSlide = 1;
+            if(currentSlide > totalSlides) currentSlide = totalSlides;
+            
+            document.getElementById('slide-' + currentSlide).classList.add('active');
+            
+            document.getElementById('current-slide').innerText = currentSlide;
+            
+            document.getElementById('btn-prev').disabled = (currentSlide === 1);
+            document.getElementById('btn-next').disabled = (currentSlide === totalSlides);
+
+            updateProgress();
+        }
+
+        // Keyboard Navigation Support
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'Space') {
+                if (currentSlide < totalSlides) changeSlide(1);
+            } else if (e.key === 'ArrowLeft') {
+                if (currentSlide > 1) changeSlide(-1);
+            }
+        });
+
+        // Initialize state
+        changeSlide(0);
+    </script>
+</body>
+</html>
